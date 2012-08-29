@@ -1,3 +1,4 @@
+#include <sql/impl/database.hpp>
 #include <sql/interface/interface.hpp>
 
 table::table(std::string const & name)
@@ -41,4 +42,9 @@ int table::add_column(abstract_field* fld, std::string const & name)
 	int pos = fields.size();
 	fields.insert(std::make_pair(fld, name));
 	return pos;
+}
+
+void table::create(database * dbptr)
+{
+	dbptr->get_dialect()->create_table(name_, get_fields());
 }

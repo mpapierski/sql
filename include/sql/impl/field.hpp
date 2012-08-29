@@ -2,8 +2,10 @@
 #define SQL_DETAIL_FIELD_
 
 #include <ostream>
+#include <sstream>
 #include <cassert>
 #include <sql/interface/detail/field.hpp>
+#include <sql/interface/detail/query.hpp>
 
 template <typename T>
 struct field: abstract_field

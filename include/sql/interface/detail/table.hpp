@@ -7,6 +7,7 @@
 
 struct abstract_field;
 struct query;
+struct database;
 
 struct table
 {
@@ -35,6 +36,11 @@ struct table
     
 	void bind_to(query * qry);
 	void load(query * qry);
+	
+	/**
+	 * Issue CREATE TABLE statement on a database.
+	 */
+	void create(database * dbptr);
 };
 
 #endif /* SQL_INTERFACE_BINDER_INCLUDED_ */
