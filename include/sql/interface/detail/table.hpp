@@ -41,6 +41,11 @@ struct table
 	 * Issue CREATE TABLE statement on a database.
 	 */
 	void create(database * dbptr);
+	 
+	/**
+	 * Issue INSERT INTO statement on a database.
+	 */
+	void insert(database * dbptr);
 };
 
 #endif /* SQL_INTERFACE_BINDER_INCLUDED_ */

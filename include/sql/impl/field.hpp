@@ -6,6 +6,7 @@
 #include <cassert>
 #include <sql/interface/detail/field.hpp>
 #include <sql/interface/detail/query.hpp>
+#include <sql/interface/detail/null.hpp>
 
 template <typename T>
 struct field: abstract_field
@@ -26,7 +27,12 @@ struct field: abstract_field
 	
 	std::string name() const { return name_; }
 	
-	field & operator=(T const & new_value);
+	field & operator=(T const & new_value)
+	{
+		null_ = false;
+		value_ = new_value;
+		return *this;
+	}
 	
 	inline T const & value() const
 	{
@@ -49,7 +55,10 @@ struct field: abstract_field
 	
 	void bind_to(query * qry)
 	{
-		
+		if (null_)
+			qry->add_bind(new binder<null_impl>(null_impl()));
+		else	
+			qry->add_bind(new binder<T>(value_));
 	}
 	
 	void get_value(query * qry)

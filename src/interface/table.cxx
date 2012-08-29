@@ -48,3 +48,12 @@ void table::create(database * dbptr)
 {
 	dbptr->get_dialect()->create_table(name_, get_fields());
 }
+
+void table::insert(database * dbptr)
+{
+	::query * qry = dbptr->get_dialect()->insert_stmt(name(), get_fields());
+	bind_to(qry);
+	qry->bind_all();
+	qry->run();
+	delete qry;
+}

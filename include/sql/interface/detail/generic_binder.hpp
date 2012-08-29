@@ -23,7 +23,7 @@ struct binder: abstract_binder
 	
 	void bind(query * qry)
 	{
-		qry->bind<T>(value_);
+		qry->bind(value_);
 	}
 };
 

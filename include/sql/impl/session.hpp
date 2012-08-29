@@ -30,7 +30,11 @@ struct session
 	}
 	
 	template <typename T>
-	void add(T & model_inst);
+	void add(T & model_inst)
+	{
+		model_inst.insert(db_);
+	}
+	
 	void execute(std::string const & q);
 };
 

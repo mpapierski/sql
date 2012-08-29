@@ -3,6 +3,7 @@
 
 #include <list>
 #include <string>
+#include <sql/interface/detail/null.hpp>
 
 struct abstract_binder;
 
@@ -42,8 +43,28 @@ struct query
 	template <typename T>
 	T get(int index);
 	
-	template <typename T>
-	void bind(T);
+	void bind(int val)
+	{
+		this->bind_int(val);
+	}
+
+
+	void bind(std::string const & val)
+	{
+		this->bind_text(val.c_str(), val.length());
+	}
+
+	void bind(const char * val)
+	{
+		this->bind_text(val, ::strlen(val));
+	}
+
+	void bind(null_impl)
+	{
+		this->bind_null();
+	}
+
 };
+
 
 #endif /* SQL_INTERFACE_QUERY_INCLUDED_ */

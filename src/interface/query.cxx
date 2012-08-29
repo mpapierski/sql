@@ -32,21 +32,3 @@ std::string query::get(int index)
 	this->get_string(index, value);
 	return value;
 }
-
-template <>
-void query::bind(int val)
-{
-	this->bind_int(val);
-}
-
-template <>
-void query::bind(std::string const & val)
-{
-	this->bind_text(val.c_str(), val.length());
-}
-
-template <>
-void query::bind(const char * val)
-{
-	this->bind_text(val, ::strlen(val));
-}
