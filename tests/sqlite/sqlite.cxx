@@ -71,3 +71,28 @@ BOOST_AUTO_TEST_CASE (test_insert_existing_table)
 	//
 }
 
+//____________________________________________________________________________//
+
+BOOST_AUTO_TEST_CASE (test_collection)
+{
+	// check if adding new model instance (insert into) nothrows
+	// when table exists.
+	database db("sqlite:///:memory:");
+	session s = db.session();
+	// create table
+	s.create_table<person>();
+	
+	// new person
+	person p;
+	p.id = 1234;
+	p.first_name = "John";
+	p.last_name = "Smith";
+	
+	// XXX: Throw SQL exceptions instead of std::runtime_error.
+	BOOST_REQUIRE_NO_THROW(s.add(p));
+	//
+	collection<person> cc = s.query<person>().
+		filter(eq_(F(&person::id), 1234)).
+		limit(1);
+}
+

@@ -17,3 +17,8 @@ void session::execute(std::string const & q)
 {
     db_->dialect_->execute(q);
 }
+
+::query * session::new_query()
+{
+	return db_->query_factory();
+}
