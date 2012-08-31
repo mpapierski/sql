@@ -118,3 +118,15 @@ BOOST_AUTO_TEST_CASE (test_empty_collection)
 	collection<person>::const_iterator p2 = cc.next();
 	BOOST_CHECK(!p2);
 }
+
+//____________________________________________________________________________//
+
+BOOST_AUTO_TEST_CASE (test_empty_collection_no_table)
+{
+	database db("sqlite:///:memory:");
+	session s = db.session();
+	// XXX: Throw SQL error instead of std::runtime_error.
+	BOOST_REQUIRE_THROW(collection<person> cc = s.query<person>(). \
+		filter(eq_(F(&person::id), 1234)). \
+		limit(1), std::runtime_error);
+}
