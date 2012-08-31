@@ -80,6 +80,11 @@ struct field: abstract_field
 		lhs << f.as_string();
 		return lhs;
 	}
+	
+	bool operator==(T const & data) const
+	{
+		return value_ == data;
+	}
 };
 
 

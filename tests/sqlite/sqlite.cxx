@@ -94,5 +94,27 @@ BOOST_AUTO_TEST_CASE (test_collection)
 	collection<person> cc = s.query<person>().
 		filter(eq_(F(&person::id), 1234)).
 		limit(1);
+	collection<person>::const_iterator p2 = cc.next();
+	BOOST_CHECK(!!p2);
+	BOOST_REQUIRE_NO_THROW(*p2);
+	person const & person_ = *p2;
+	BOOST_CHECK(person_.id == 1234);
+	BOOST_CHECK(person_.first_name == std::string("John"));
+	BOOST_CHECK(person_.last_name == std::string("Smith"));
 }
 
+//____________________________________________________________________________//
+
+BOOST_AUTO_TEST_CASE (test_empty_collection)
+{
+	database db("sqlite:///:memory:");
+	session s = db.session();
+	// create table
+	s.create_table<person>();
+	//
+	collection<person> cc = s.query<person>().
+		filter(eq_(F(&person::id), 1234)).
+		limit(1);
+	collection<person>::const_iterator p2 = cc.next();
+	BOOST_CHECK(!p2);
+}

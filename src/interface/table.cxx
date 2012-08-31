@@ -57,3 +57,15 @@ void table::insert(database * dbptr)
 	qry->run();
 	delete qry;
 }
+
+void table::load(query * qry)
+{
+	unsigned int i = 0;
+	for (std::map<abstract_field*, std::string>::const_iterator it(fields.begin()),
+		end(fields.end()); it != end; ++it)
+	{
+		abstract_field * f = it->first;
+		f->get_value(qry);
+	}
+}
+

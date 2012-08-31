@@ -47,6 +47,7 @@ struct collection
 		
 		T const & operator*() const
 		{
+			assert(present_);
 			return wrapper_;
 		}
 		operator bool()
