@@ -3,6 +3,7 @@
 
 #include <string>
 #include <sstream>
+#include <iostream>
 
 template <typename Lhs>
 struct count_expr
@@ -21,8 +22,14 @@ struct count_expr
 	template <typename F>
 	int operator()(F const & model_inst, query * qry)
 	{
+		// TODO: Reimplement this ugly workaround.
+		std::string const & e = lhs_(model_inst, qry);
 		std::stringstream ss;
-		ss << "SELECT COUNT(*) FROM \"" << model_inst.name() << "\"";
+		ss << "SELECT COUNT(*) FROM ";
+		if (!e.empty())
+			ss << "(" << e << ")";
+		else
+			ss << "\"" << model_inst.name() << "\"";
 		qry->prepare(ss.str());
 		qry->bind_all();
 		qry->run();

@@ -5,6 +5,7 @@
 #include <string>
 
 #include <sql/query/limit_expr.hpp>
+#include <sql/query/count_expr.hpp>
 
 template <typename Lhs, typename T>
 struct expr_wrapper
@@ -33,6 +34,11 @@ struct expr_wrapper
 	limit_expr<this_type> limit(int N)
 	{
 		return limit_expr<this_type>(*this, N);
+	}
+	
+	int count()
+	{
+		return count_expr<this_type>(*this)(model_type(), get_query());
 	}
 	
 	query * get_query()

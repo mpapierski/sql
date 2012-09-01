@@ -182,3 +182,39 @@ BOOST_AUTO_TEST_CASE(test_count)
 	
 	BOOST_CHECK_EQUAL(s.query<person>().count(), 1001);
 }
+
+//____________________________________________________________________________//
+
+BOOST_AUTO_TEST_CASE(test_filter_count)
+{
+	database db("sqlite:///:memory:");
+	session s = db.session();
+	s.create_table<person>();
+	
+	BOOST_CHECK_EQUAL(s.query<person>().count(), 0);
+	
+	{
+		person p;
+		p.id = 1000;
+		p.first_name = "First name";
+		p.last_name = "Last name";
+		s.add(p);
+	}
+
+	BOOST_CHECK_EQUAL(s.query<person>().count(), 1);
+	
+	{
+		person p;
+		p.id = 1001;
+		p.first_name = "First name";
+		p.last_name = "Last name";
+		s.add(p);
+	}
+	
+	BOOST_CHECK_EQUAL(s.query<person>().count(), 2);
+	
+	BOOST_CHECK_EQUAL(s.query<person>().filter(eq_(F(&person::id), 1001)).count(), 1);
+	BOOST_CHECK_EQUAL(s.query<person>().filter(eq_(F(&person::id), 1000)).count(), 1);
+	BOOST_CHECK_EQUAL(s.query<person>().filter(eq_(F(&person::id), 0)).count(), 0);
+	BOOST_CHECK_EQUAL(s.query<person>().count(), 2);
+}

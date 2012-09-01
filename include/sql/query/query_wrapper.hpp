@@ -34,6 +34,12 @@ struct query_wrapper
 	query * get_query() { return qry_; }
 	
 	template <typename F>
+	std::string operator()(F const &, query *) const
+	{
+		return std::string();
+	}
+	
+	template <typename F>
 	expr_wrapper<this_type, F> filter(F f)
 	{
 		return expr_wrapper<this_type, F>(*this, f);
