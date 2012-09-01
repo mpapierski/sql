@@ -6,6 +6,7 @@
 #include <string>
 #include <sql/interface/detail/query.hpp>
 #include <sql/query/expr_wrapper.hpp>
+#include <sql/query/count_expr.hpp>
 #include <sql/query/all_expr.hpp>
 
 template <typename T>
@@ -41,6 +42,11 @@ struct query_wrapper
 	all_expr<this_type> all()
 	{
 		return all_expr<this_type>(*this);
+	}
+	
+	int count()
+	{
+		return count_expr<this_type>(*this)(model_type(), get_query());
 	}
 };
 

@@ -157,3 +157,28 @@ BOOST_AUTO_TEST_CASE (test_inserts)
 		BOOST_CHECK_EQUAL(p.last_name, "Last name");
 	}
 }
+
+//____________________________________________________________________________//
+
+BOOST_AUTO_TEST_CASE(test_count)
+{
+	database db("sqlite:///:memory:");
+	session s = db.session();
+	s.create_table<person>();
+	
+	BOOST_CHECK_EQUAL(s.query<person>().count(), 0);
+	
+	person p;
+	p.id = 1000;
+	p.first_name = "First name";
+	p.last_name = "Last name";
+	s.add(p);
+	BOOST_CHECK_EQUAL(s.query<person>().count(), 1);
+	
+	for (int i = 0; i < 1000; i++)
+	{
+		s.add(p);
+	}
+	
+	BOOST_CHECK_EQUAL(s.query<person>().count(), 1001);
+}
