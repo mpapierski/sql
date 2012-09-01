@@ -40,7 +40,7 @@ struct field: abstract_field
 		return value_;
 	}
 	
-	std::string as_string()
+	std::string as_string() const
 	{
 		if (null_) return "NULL";
 		std::stringstream ss;

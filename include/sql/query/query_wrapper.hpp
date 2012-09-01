@@ -6,6 +6,7 @@
 #include <string>
 #include <sql/interface/detail/query.hpp>
 #include <sql/query/expr_wrapper.hpp>
+#include <sql/query/all_expr.hpp>
 
 template <typename T>
 struct query_wrapper
@@ -30,11 +31,16 @@ struct query_wrapper
 		fields_stmt = ss.str();
 	}
 	query * get_query() { return qry_; }
+	
 	template <typename F>
 	expr_wrapper<this_type, F> filter(F f)
 	{
-		expr_wrapper<this_type, F> expr(*this, f);
-		return expr;
+		return expr_wrapper<this_type, F>(*this, f);
+	}
+	
+	all_expr<this_type> all()
+	{
+		return all_expr<this_type>(*this);
 	}
 };
 

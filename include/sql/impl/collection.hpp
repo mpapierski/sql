@@ -18,6 +18,16 @@ struct collection
 		qry_->bind_all();
 	}
 	
+	template <typename F>
+	collection(all_expr<F> lmt)
+		: model_inst_()
+		, qry_(lmt.get_query())
+		, expr_(lmt(model_inst_, qry_))
+	{
+		qry_->prepare(expr_);
+		qry_->bind_all();
+	}
+	
 	~collection()
 	{
 		delete qry_;

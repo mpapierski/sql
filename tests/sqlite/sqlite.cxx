@@ -130,3 +130,30 @@ BOOST_AUTO_TEST_CASE (test_empty_collection_no_table)
 		filter(eq_(F(&person::id), 1234)). \
 		limit(1), std::runtime_error);
 }
+
+//____________________________________________________________________________//
+
+BOOST_AUTO_TEST_CASE (test_inserts)
+{
+	database db("sqlite:///:memory:");
+	session s = db.session();
+	s.create_table<person>();
+	for (unsigned int i = 1; i <= 100; i++)
+	{
+		person p;
+		p.id = i;
+		p.first_name = "First name";
+		p.last_name = "Last name";
+		s.add(p);
+	}
+	// XXX: Throw SQL error instead of std::runtime_error.
+	collection<person> cc = s.query<person>().all();
+	unsigned int n = 0;
+	while (collection<person>::const_iterator result = cc.next())
+	{
+		person const & p = *result;
+		BOOST_CHECK_EQUAL(p.id, ++n);
+		BOOST_CHECK_EQUAL(p.first_name, "First name");
+		BOOST_CHECK_EQUAL(p.last_name, "Last name");
+	}
+}
