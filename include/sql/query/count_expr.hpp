@@ -3,7 +3,6 @@
 
 #include <string>
 #include <sstream>
-#include <iostream>
 
 template <typename Lhs>
 struct count_expr
@@ -22,15 +21,11 @@ struct count_expr
 	template <typename F>
 	int operator()(F const & model_inst, query * qry)
 	{
-		// TODO: Reimplement this ugly workaround.
+		std::list<std::string> new_fields;
+		new_fields.push_back("COUNT(*)");
+		lhs_.set_fields(new_fields);		
 		std::string const & e = lhs_(model_inst, qry);
-		std::stringstream ss;
-		ss << "SELECT COUNT(*) FROM ";
-		if (!e.empty())
-			ss << "(" << e << ")";
-		else
-			ss << "\"" << model_inst.name() << "\"";
-		qry->prepare(ss.str());
+		qry->prepare(e);
 		qry->bind_all();
 		qry->run();
 		int result = 0;

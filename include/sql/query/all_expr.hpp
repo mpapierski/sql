@@ -2,7 +2,6 @@
 #define SQL_QUERY_ALL_INCLUDED_
 
 #include <string>
-#include <iostream>
 
 template <typename Lhs>
 struct all_expr
@@ -21,9 +20,7 @@ struct all_expr
 	template <typename F>
 	std::string operator()(F const & model_inst, query * qry)
 	{
-		std::stringstream ss;
-		ss << "SELECT " << lhs_.fields_stmt << " FROM \"" << model_inst.name() << "\"";
-		return ss.str();
+		return lhs_(model_inst, qry);
 	}
 	
 	query * get_query()

@@ -27,7 +27,7 @@ struct expr_wrapper
 	std::string operator()(F const & model_inst, query * qry)
 	{
 		std::stringstream ss;
-		ss << "SELECT " << lhs_.fields_stmt << " FROM \"" << model_inst.name() << "\" WHERE " << t_(model_inst, qry);        
+		ss << lhs_(model_inst, qry) << " WHERE " << t_(model_inst, qry);        
 		return ss.str();
 	}
 	
@@ -40,10 +40,15 @@ struct expr_wrapper
 	{
 		return count_expr<this_type>(*this)(model_type(), get_query());
 	}
-	
+		
 	query * get_query()
 	{
 		return lhs_.get_query();
+	}
+	
+	void set_fields(std::list<std::string> const & f)
+	{
+		lhs_.set_fields(f);
 	}
 };
 
