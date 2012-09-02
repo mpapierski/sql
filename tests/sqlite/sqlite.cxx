@@ -3,7 +3,6 @@
 #include <string>
 #include <stdexcept>
 #include <boost/test/included/unit_test.hpp>
-#include <boost/test/execution_monitor.hpp>
 #include <sql/sql.hpp>
 
 using namespace std;
@@ -92,7 +91,7 @@ BOOST_AUTO_TEST_CASE (test_collection)
 	BOOST_REQUIRE_NO_THROW(s.add(p));
 	//
 	collection<person> cc = s.query<person>().
-		filter(eq_(F(&person::id), 1234)).
+		filter(F(&person::id) == 1234).
 		limit(1);
 	collection<person>::const_iterator p2 = cc.next();
 	BOOST_CHECK(!!p2);
@@ -113,7 +112,7 @@ BOOST_AUTO_TEST_CASE (test_empty_collection)
 	s.create_table<person>();
 	//
 	collection<person> cc = s.query<person>().
-		filter(eq_(F(&person::id), 1234)).
+		filter(F(&person::id) == 1234).
 		limit(1);
 	collection<person>::const_iterator p2 = cc.next();
 	BOOST_CHECK(!p2);
@@ -127,7 +126,7 @@ BOOST_AUTO_TEST_CASE (test_empty_collection_no_table)
 	session s = db.session();
 	// XXX: Throw SQL error instead of std::runtime_error.
 	BOOST_REQUIRE_THROW(collection<person> cc = s.query<person>(). \
-		filter(eq_(F(&person::id), 1234)). \
+		filter(F(&person::id) == 1234). \
 		limit(1), std::runtime_error);
 }
 
@@ -213,8 +212,8 @@ BOOST_AUTO_TEST_CASE(test_filter_count)
 	
 	BOOST_CHECK_EQUAL(s.query<person>().count(), 2);
 	
-	BOOST_CHECK_EQUAL(s.query<person>().filter(eq_(F(&person::id), 1001)).count(), 1);
-	BOOST_CHECK_EQUAL(s.query<person>().filter(eq_(F(&person::id), 1000)).count(), 1);
-	BOOST_CHECK_EQUAL(s.query<person>().filter(eq_(F(&person::id), 0)).count(), 0);
+	BOOST_CHECK_EQUAL(s.query<person>().filter(F(&person::id) == 1001).count(), 1);
+	BOOST_CHECK_EQUAL(s.query<person>().filter(F(&person::id) == 1000).count(), 1);
+	BOOST_CHECK_EQUAL(s.query<person>().filter(F(&person::id) == 0).count(), 0);
 	BOOST_CHECK_EQUAL(s.query<person>().count(), 2);
 }

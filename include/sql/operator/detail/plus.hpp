@@ -6,6 +6,8 @@ struct query;
 template <typename T1, typename T2>
 struct plus_impl
 {
+	typedef plus_impl<T1, T2> this_type;
+	
 	T1 t1_;
 	T2 t2_;
 	

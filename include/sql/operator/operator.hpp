@@ -85,4 +85,71 @@ plus_impl<typename value_wrapper<T1>::type,
 	>(t1, t2);
 }
 
+//
+// GLOBAL OPERATORS FOR EXPRESSIONS
+//
+
+
+// N-th template name. Concatenate any token with n. This "any" token should be
+// constant (do not use __COUNTER__ here etc)
+#define _TPL(n) TEMPLATE_ ## n
+
+#define TEMPLATED_AUX_BASE(n)                                                  \
+	template < n , typename _RHS>
+#define TEMPLATED_AUX_1                                                        \
+	typename _TPL(1)
+#define TEMPLATED_AUX_2                                                        \
+	typename _TPL(1), typename _TPL(2)
+#define TEMPLATED_AUX_3                                                        \
+	typename _TPL(1), typename _TPL(2), typename _TPL(3)
+
+// Generate template < typename ..., typename _RHS> declaration for N templates
+#define TEMPLATED(n)                                                           \
+	TEMPLATED_AUX_BASE(TEMPLATED_AUX_ ## n)
+
+#define PASS_TPL_AUX_1(token)                                                  \
+	token < _TPL(1) >
+#define PASS_TPL_AUX_2(token)                                                  \
+	token < _TPL(1) , _TPL(2) >
+#define PASS_TPL_AUX_3(token)                                                  \
+	token < _TPL(1), _TPL(2), _TPL(3) >
+#define PASS_TPL_(n)                                                           \
+	PASS_TPL_AUX_ ## n
+// Adds N templates to token.
+#define PASS_TPL(n, token)                                                     \
+	PASS_TPL_(n)(token)
+
+// Auxiliary implementation of templated operator declaration
+#define IMPLEMENT_OPERATOR_AUX(op, node, lhs)                                  \
+	node < lhs , typename value_wrapper< _RHS >::type >                        \
+	operator op ( lhs const & lhs_, _RHS const & rhs_)                         \
+{                                                                              \
+	return node < lhs , typename value_wrapper<_RHS>::type>(lhs_, rhs_);       \
+}
+
+/**
+ * Declare global operator. Left side is a class, there is no right side
+ * because this one is always "any". LHS is always "infected" with N templates.
+ * This "N" is the same as how many templated parameters are in this function.
+ * @param n Templated arguments count. These templates are passed to LHS.
+ * @param op Operator name. IE. ==, &&, ||...
+ * @param lhs Left side of operator.
+ */
+#define IMPLEMENT_OPERATOR(n, op, node, lhs) \
+	TEMPLATED(n) \
+	IMPLEMENT_OPERATOR_AUX(op, node, PASS_TPL(n, lhs))
+
+// FIELD == RHS
+IMPLEMENT_OPERATOR(2, ==, eq_impl, field_impl)
+// FIELD + RHS
+IMPLEMENT_OPERATOR(2, +, plus_impl, field_impl)
+// (LHS == RHS) && ...
+IMPLEMENT_OPERATOR(2, &&, and_impl, eq_impl)
+// ((...) && (...)) && RHS
+IMPLEMENT_OPERATOR(2, &&, and_impl, and_impl)
+// (LHS == RHS) || ...
+IMPLEMENT_OPERATOR(2, ||, or_impl, eq_impl)
+// ((...) || (...)) || LHS
+IMPLEMENT_OPERATOR(2, ||, or_impl, or_impl)
+
 #endif /* SQL_EXPRESSION_OPERATORS_ */

@@ -8,6 +8,8 @@ struct query;
 template <typename T1, typename T2>
 struct and_impl
 {
+	typedef and_impl<T1, T2> this_type;
+	
 	T1 t1_;
 	T2 t2_;
 	nest_function_t nest_;

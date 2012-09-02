@@ -83,6 +83,25 @@ BOOST_AUTO_TEST_CASE (test_query_builder1)
 
 //____________________________________________________________________________//
 
+BOOST_AUTO_TEST_CASE (test_query_builder1_operators)
+{
+	test obj;
+	mock_query * qry = new mock_query;
+	std::string const & e1 = (F(&test::id) == 69 && F(&test::id) == 42)(obj, qry);
+	
+	// prepare query
+	qry->prepare(e1);
+	// bind all late binders
+	qry->bind_all();
+	
+	BOOST_CHECK_EQUAL(qry->prepared_, "(\"id\" = ?1) AND (\"id\" = ?2)");
+	BOOST_CHECK_EQUAL(qry->bound_, 2);
+	
+	delete qry;
+}
+
+//____________________________________________________________________________//
+
 BOOST_AUTO_TEST_CASE (test_query_builder2)
 {
 	test obj;
@@ -100,6 +119,25 @@ BOOST_AUTO_TEST_CASE (test_query_builder2)
 			)
 		)
 	)(obj, qry);
+	
+	// prepare query
+	qry->prepare(e1);
+	// bind all late binders
+	qry->bind_all();
+	
+	BOOST_CHECK_EQUAL(qry->prepared_, "(\"id\" = ?1) AND (\"id\" = \"id\" + ?2)");
+	BOOST_CHECK_EQUAL(qry->bound_, 2);
+	
+	delete qry;
+}
+
+//____________________________________________________________________________//
+
+BOOST_AUTO_TEST_CASE (test_query_builder2_operators)
+{
+	test obj;
+	mock_query * qry = new mock_query;
+	std::string const & e1 = ((F(&test::id) == 69) && (F(&test::id) == (F(&test::id) + 69)))(obj, qry);
 	
 	// prepare query
 	qry->prepare(e1);
@@ -154,6 +192,24 @@ BOOST_AUTO_TEST_CASE (test_query_builder3)
 
 //____________________________________________________________________________//
 
+BOOST_AUTO_TEST_CASE (test_query_builder3_operators)
+{
+	test obj;
+	mock_query * qry = new mock_query;
+	std::string const & e1 = ((F(&test::id) == 69) && (F(&test::id) == 42) && (F(&test::id) == 69) && (F(&test::id) == 42))(obj, qry);
+	// prepare query
+	qry->prepare(e1);
+	// bind all late binders
+	qry->bind_all();
+	
+	BOOST_CHECK_EQUAL(qry->prepared_, "(\"id\" = ?1) AND (\"id\" = ?2) AND (\"id\" = ?3) AND (\"id\" = ?4)");
+	BOOST_CHECK_EQUAL(qry->bound_, 4);
+	
+	delete qry;
+}
+
+//____________________________________________________________________________//
+
 BOOST_AUTO_TEST_CASE (test_query_builder4)
 {
 	test obj;
@@ -187,6 +243,80 @@ BOOST_AUTO_TEST_CASE (test_query_builder4)
 	qry->bind_all();
 	
 	BOOST_CHECK_EQUAL(qry->prepared_, "(\"id\" = ?1) AND (\"id\" = ?2) AND ((\"id\" = ?3) OR (\"id\" = ?4))");
+	BOOST_CHECK_EQUAL(qry->bound_, 4);
+	
+	delete qry;
+}
+
+//____________________________________________________________________________//
+
+BOOST_AUTO_TEST_CASE (test_query_builder4_operators)
+{
+	test obj;
+	mock_query * qry = new mock_query;
+	std::string const & e1 = ((F(&test::id) == 69) && (F(&test::id) == 42) && ((F(&test::id) == 69) || (F(&test::id) == 42)))(obj, qry);	
+	// prepare query
+	qry->prepare(e1);
+	// bind all late binders
+	qry->bind_all();
+	
+	BOOST_CHECK_EQUAL(qry->prepared_, "(\"id\" = ?1) AND (\"id\" = ?2) AND ((\"id\" = ?3) OR (\"id\" = ?4))");
+	BOOST_CHECK_EQUAL(qry->bound_, 4);
+	
+	delete qry;
+}
+
+BOOST_AUTO_TEST_CASE (test_query_builder5)
+{
+	test obj;
+	mock_query * qry = new mock_query;
+	std::string const & e1 = or_(
+		or_(
+			eq_(
+				F(&test::id),
+				69
+			),
+			eq_(
+				F(&test::id),
+				42
+			)
+		),
+		or_(
+			eq_(
+				F(&test::id),
+				69
+			),
+			eq_(
+				F(&test::id),
+				42
+			)
+		)
+	)(obj, qry);
+	
+	// prepare query
+	qry->prepare(e1);
+	// bind all late binders
+	qry->bind_all();
+	
+	BOOST_CHECK_EQUAL(qry->prepared_, "(\"id\" = ?1) OR (\"id\" = ?2) OR (\"id\" = ?3) OR (\"id\" = ?4)");
+	BOOST_CHECK_EQUAL(qry->bound_, 4);
+	
+	delete qry;
+}
+
+//____________________________________________________________________________//
+
+BOOST_AUTO_TEST_CASE (test_query_builder5_operators)
+{
+	test obj;
+	mock_query * qry = new mock_query;
+	std::string const & e1 = ((F(&test::id) == 69) || (F(&test::id) == 42) || ((F(&test::id) == 69) || (F(&test::id) == 42)))(obj, qry);	
+	// prepare query
+	qry->prepare(e1);
+	// bind all late binders
+	qry->bind_all();
+	
+	BOOST_CHECK_EQUAL(qry->prepared_, "(\"id\" = ?1) OR (\"id\" = ?2) OR (\"id\" = ?3) OR (\"id\" = ?4)");
 	BOOST_CHECK_EQUAL(qry->bound_, 4);
 	
 	delete qry;

@@ -12,6 +12,8 @@ struct query;
 template <typename T, typename Cls>
 struct field_impl
 {
+	typedef field_impl<T, Cls> this_type;
+	
 	typedef field<T> Cls::*member_field_t;
 	member_field_t field_;
 	
