@@ -30,6 +30,13 @@ struct session
 	}
 	
 	template <typename T>
+	void drop_table()
+	{
+		T t;
+		t.drop(db_);
+	}
+	
+	template <typename T>
 	void add(T & model_inst)
 	{
 		model_inst.insert(db_);

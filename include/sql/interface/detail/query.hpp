@@ -64,7 +64,8 @@ struct query
 	{
 		this->bind_null();
 	}
-
+	
+	virtual void reset() {}
 };
 
 

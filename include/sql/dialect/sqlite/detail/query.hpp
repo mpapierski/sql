@@ -30,6 +30,11 @@ struct sqlite_query: query
 	virtual void get_int(int index, int & result);
 	virtual void get_string(int index, std::string & result);
 	dialect * get_dialect();
+	
+	/**
+	 * Reset statement
+	 */
+	virtual void reset();
 };
 
 #endif

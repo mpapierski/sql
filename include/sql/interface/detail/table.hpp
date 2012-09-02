@@ -43,6 +43,11 @@ struct table
 	void create(database * dbptr);
 	 
 	/**
+	 * Issue DROP TABLE statement on a database.
+	 */
+	void drop(database * dbptr);
+	 
+	/**
 	 * Issue INSERT INTO statement on a database.
 	 */
 	void insert(database * dbptr);

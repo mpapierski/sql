@@ -49,6 +49,11 @@ void table::create(database * dbptr)
 	dbptr->get_dialect()->create_table(name_, get_fields());
 }
 
+void table::drop(database * dbptr)
+{
+	dbptr->get_dialect()->drop_table(name_);
+}
+
 void table::insert(database * dbptr)
 {
 	::query * qry = dbptr->get_dialect()->insert_stmt(name(), get_fields());

@@ -30,6 +30,7 @@ struct count_expr
 		qry->run();
 		int result = 0;
 		qry->get_int(0, result);
+		qry->reset();
 		return result;
 	}
 	

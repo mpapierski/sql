@@ -149,3 +149,13 @@ dialect * sqlite_query::get_dialect()
 {
 	return dialect_;
 }
+
+void sqlite_query::reset()
+{
+	assert(stmt_);
+	if (sqlite3_reset(stmt_) != SQLITE_OK)
+	{
+		std::string const & msg = sqlite3_errmsg(dialect_->connection_);
+		throw std::runtime_error(msg);
+	}
+}
