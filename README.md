@@ -1,6 +1,7 @@
 # sql
 
 Object-relational mapper and the database toolkit for C++.
+[![Build Status](https://secure.travis-ci.org/mpapierski/sql.png)](http://travis-ci.org/mpapierski/sql)
 
 ## Introduction
 
