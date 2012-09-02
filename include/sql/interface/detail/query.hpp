@@ -3,6 +3,7 @@
 
 #include <list>
 #include <string>
+#include <cstring>
 #include <sql/interface/detail/null.hpp>
 
 struct abstract_binder;
@@ -56,7 +57,7 @@ struct query
 
 	void bind(const char * val)
 	{
-		this->bind_text(val, ::strlen(val));
+		this->bind_text(val, std::strlen(val));
 	}
 
 	void bind(null_impl)
