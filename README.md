@@ -38,7 +38,6 @@ GPLv3.
 * Figure out how to optimize EDSL to generate less assembly.
 * Support for constraints.
 * Fix possible memory leaks.
-* Implement collections, select statements (limit, filter...)
 * Documentation
 
 ## Help
@@ -56,11 +55,13 @@ Define your schema.
 		field<int> id;
 		field<string> first_name;
 		field<string> last_name;
+		field<int> age;
 		person()
 			: table("person")
 			, id(this, "id")
 			, first_name(this, "first_name")
-			, last_name(this, "last_name") {}
+			, last_name(this, "last_name")
+			, age(this, "age") {}
 	};
 
 ### Connect it to the database
@@ -87,14 +88,22 @@ And thats all.
 
 * Return no more than 10 John Smiths
 
-	collection<person> results =
-		session.query<person>().
-		filter(
-			(F(&person::first_name) == "John") &&
-			(F(&person::last_name) == "Smith")
-		).
-		limit(10)
-		
+		collection<person> results =
+			session.query<person>().
+			filter(
+				(F(&person::first_name) == "John") &&
+				(F(&person::last_name) == "Smith")
+			).
+			limit(10)
+
+* How many persons are in the database?
+
+		int count = session.query<person>().count();
+
+* How many persons are there whose age is 18?
+
+		int count = session.query<person>().filter(F(&person::age) == 18).count()
+
 ### More
 
 Documentation is under construction. See tests, and examples.
