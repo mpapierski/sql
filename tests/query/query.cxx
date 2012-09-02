@@ -23,15 +23,28 @@ public:
 		, last_name(this, "last_name") {}
 };
 
-static const std::string DB = std::getenv("DB") ? std::getenv("DB") : std::string();
+static std::string DB = std::getenv("DB") ? std::getenv("DB") : std::string();
 
 struct connection_fixture
 {
 	database db;
 	session s;
 	connection_fixture()
-		: db(DB)
-		, s(db.session()) {}
+		: db(get_test_database_url())
+		, s(db.session())
+	{
+	}
+	
+	std::string get_test_database_url()
+	{
+		// XXX: #if defined(TRAVIS) ?
+		if (std::getenv("TRAVIS"))
+		{
+			if (DB == "sqlite")
+				return "sqlite://:memory:";
+		}
+		return DB;
+	}
 };
 
 struct session_fixture: connection_fixture

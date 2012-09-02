@@ -4,9 +4,7 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq -y cmake libsqlite3-dev libboost-dev
 env:
-  - DB=sqlite://:memory: CMAKE_CXX_COMPILER=clang++
-  - DB=sqlite://:memory: CMAKE_CXX_COMPILER=g++
-  - DB=sqlite:///tmp/test.db CMAKE_CXX_COMPILER=g++
-  - DB=sqlite:///tmp/test.db CMAKE_CXX_COMPILER=clang++
+  - DB=sqlite CMAKE_CXX_COMPILER=clang++
+  - DB=sqlite CMAKE_CXX_COMPILER=g++
 script:
   - mkdir build && cd build && cmake .. && make && make test
