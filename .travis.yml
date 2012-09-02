@@ -1,0 +1,10 @@
+language:
+  - cpp
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq -y cmake libsqlite3-dev
+env:
+  - CMAKE_CXX_COMPILER=clang++
+  - CMAKE_CXX_COMPILER=g++
+script:
+  - mkdir build && cd build && cmake .. && make && make test
