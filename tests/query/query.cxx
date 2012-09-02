@@ -2,6 +2,7 @@
 
 #include <string>
 #include <stdexcept>
+#include <cstdlib>
 #include <boost/test/included/unit_test.hpp>
 #include <sql/sql.hpp>
 
@@ -22,13 +23,39 @@ public:
 		, last_name(this, "last_name") {}
 };
 
-//____________________________________________________________________________//
+static const std::string DB = std::getenv("DB") ? std::getenv("DB") : std::string();
 
-BOOST_AUTO_TEST_CASE (test_connection)
+struct connection_fixture
 {
-	database db("sqlite:///:memory:");
-	session s = db.session();
+	database db;
+	session s;
+	connection_fixture()
+		: db(DB)
+		, s(db.session()) {}
+};
+
+struct session_fixture: connection_fixture
+{
+	session_fixture()
+	{
+		s.create_table<person>();
+	}
+	
+	~session_fixture()
+	{
+		s.drop_table<person>();
+	}
+};
+
+BOOST_FIXTURE_TEST_SUITE(connection_test_suite, connection_fixture)
+
+BOOST_AUTO_TEST_CASE (test_create_and_drop_table)
+{
+	BOOST_REQUIRE_THROW(s.query<person>().count(), std::exception);
 	s.create_table<person>();
+	BOOST_REQUIRE_NO_THROW(s.query<person>().count());
+	s.drop_table<person>();
+	BOOST_REQUIRE_THROW(s.query<person>().count(), std::exception);
 }
 
 //____________________________________________________________________________//
@@ -37,9 +64,6 @@ BOOST_AUTO_TEST_CASE (test_insert_not_existing_table)
 {
 	// check if adding new model instance (insert into) throws
 	// when table does not exists.
-	database db("sqlite:///:memory:");
-	session s = db.session();
-	
 	person p;
 	p.first_name = "John";
 	p.last_name = "Smith";
@@ -51,15 +75,28 @@ BOOST_AUTO_TEST_CASE (test_insert_not_existing_table)
 
 //____________________________________________________________________________//
 
+BOOST_AUTO_TEST_CASE (test_empty_collection_no_table)
+{
+	database db("sqlite:///:memory:");
+	session s = db.session();
+	// XXX: Throw SQL error instead of std::runtime_error.
+	BOOST_REQUIRE_THROW(collection<person> cc = s.query<person>(). \
+		filter(F(&person::id) == 1234). \
+		limit(1), std::runtime_error);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+//____________________________________________________________________________//
+
+BOOST_FIXTURE_TEST_SUITE(session_test_suite, session_fixture)
+
+//____________________________________________________________________________//
+
 BOOST_AUTO_TEST_CASE (test_insert_existing_table)
 {
 	// check if adding new model instance (insert into) nothrows
 	// when table exists.
-	database db("sqlite:///:memory:");
-	session s = db.session();
-	// create table
-	s.create_table<person>();
-	
 	// new person
 	person p;
 	p.first_name = "John";
@@ -76,12 +113,6 @@ BOOST_AUTO_TEST_CASE (test_collection)
 {
 	// check if adding new model instance (insert into) nothrows
 	// when table exists.
-	database db("sqlite:///:memory:");
-	session s = db.session();
-	// create table
-	s.create_table<person>();
-	
-	// new person
 	person p;
 	p.id = 1234;
 	p.first_name = "John";
@@ -106,11 +137,6 @@ BOOST_AUTO_TEST_CASE (test_collection)
 
 BOOST_AUTO_TEST_CASE (test_empty_collection)
 {
-	database db("sqlite:///:memory:");
-	session s = db.session();
-	// create table
-	s.create_table<person>();
-	//
 	collection<person> cc = s.query<person>().
 		filter(F(&person::id) == 1234).
 		limit(1);
@@ -120,23 +146,8 @@ BOOST_AUTO_TEST_CASE (test_empty_collection)
 
 //____________________________________________________________________________//
 
-BOOST_AUTO_TEST_CASE (test_empty_collection_no_table)
-{
-	database db("sqlite:///:memory:");
-	session s = db.session();
-	// XXX: Throw SQL error instead of std::runtime_error.
-	BOOST_REQUIRE_THROW(collection<person> cc = s.query<person>(). \
-		filter(F(&person::id) == 1234). \
-		limit(1), std::runtime_error);
-}
-
-//____________________________________________________________________________//
-
 BOOST_AUTO_TEST_CASE (test_inserts)
 {
-	database db("sqlite:///:memory:");
-	session s = db.session();
-	s.create_table<person>();
 	for (unsigned int i = 1; i <= 100; i++)
 	{
 		person p;
@@ -161,10 +172,6 @@ BOOST_AUTO_TEST_CASE (test_inserts)
 
 BOOST_AUTO_TEST_CASE(test_count)
 {
-	database db("sqlite:///:memory:");
-	session s = db.session();
-	s.create_table<person>();
-	
 	BOOST_CHECK_EQUAL(s.query<person>().count(), 0);
 	
 	person p;
@@ -186,10 +193,6 @@ BOOST_AUTO_TEST_CASE(test_count)
 
 BOOST_AUTO_TEST_CASE(test_filter_count)
 {
-	database db("sqlite:///:memory:");
-	session s = db.session();
-	s.create_table<person>();
-	
 	BOOST_CHECK_EQUAL(s.query<person>().count(), 0);
 	
 	{
@@ -217,3 +220,5 @@ BOOST_AUTO_TEST_CASE(test_filter_count)
 	BOOST_CHECK_EQUAL(s.query<person>().filter(F(&person::id) == 0).count(), 0);
 	BOOST_CHECK_EQUAL(s.query<person>().count(), 2);
 }
+
+BOOST_AUTO_TEST_SUITE_END()
