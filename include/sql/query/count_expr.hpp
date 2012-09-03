@@ -31,12 +31,18 @@ struct count_expr
 		int result = 0;
 		qry->get_int(0, result);
 		qry->reset();
+		set_query(0);
 		return result;
 	}
 	
 	query * get_query()
 	{
 		return lhs_.get_query();
+	}
+	
+	void set_query(query * ptr)
+	{
+		lhs_.set_query(ptr);
 	}
 };
 

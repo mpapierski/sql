@@ -3,6 +3,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <sql/utils/url.hpp>
+#include <sql/utils/raii_destructor.hpp>
 #include <sql/interface/interface.hpp>
 #include <sql/dialect/sqlite/detail/dialect.hpp>
 #include <sql/dialect/sqlite/detail/query.hpp>
@@ -84,6 +85,7 @@ void sqlite_dialect::drop_table(std::string const & tbl_name)
 {
 	::query * result = query_factory();
 	assert(result);
+	raii_destructor<query> destructor(result);
 	std::stringstream ss, placeholders;
 	ss << "INSERT INTO \"" << tbl_name << "\" (";
 	for (std::list<std::string>::const_iterator it = fields.begin(), end = fields.end(); it != end; ++it)
@@ -98,6 +100,7 @@ void sqlite_dialect::drop_table(std::string const & tbl_name)
 	}
 	ss << ") VALUES (" << placeholders.str() << ")";
 	result->prepare(ss.str());
+	destructor.commit();
 	return result;
 }
 

@@ -75,7 +75,7 @@ void sqlite_query::prepare(std::string const & q)
 	int result = sqlite3_prepare_v2(
 		dialect_->connection_,
 		q.c_str(),
-		q.size(),
+		q.length(),
 		&stmt_,
 		0);
 	if (result != SQLITE_OK)

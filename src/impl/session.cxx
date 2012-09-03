@@ -10,7 +10,7 @@ session::session(database* db)
 
 session::~session()
 {
-	
+		
 }
 
 void session::execute(std::string const & q)

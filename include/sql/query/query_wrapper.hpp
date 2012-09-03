@@ -32,9 +32,19 @@ struct query_wrapper
 		}
 	}
 	
+	~query_wrapper()
+	{
+		
+	}
+	
 	query * get_query()
 	{
 		return qry_;
+	}
+	
+	void set_query(query * ptr)
+	{
+		qry_ = ptr;
 	}
 	
 	void set_fields(std::list<std::string> const & f)
@@ -81,7 +91,9 @@ struct query_wrapper
 	
 	int count()
 	{
-		return count_expr<this_type>(*this)(model_type(), get_query());
+		query * qry = get_query();
+		raii_destructor<query> destructor(qry);
+		return count_expr<this_type>(*this)(model_type(), qry);
 	}
 };
 

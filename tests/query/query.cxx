@@ -79,8 +79,6 @@ BOOST_AUTO_TEST_CASE (test_insert_not_existing_table)
 
 BOOST_AUTO_TEST_CASE (test_empty_collection_no_table)
 {
-	database db("sqlite:///:memory:");
-	session s = db.session();
 	// XXX: Throw SQL error instead of std::runtime_error.
 	BOOST_REQUIRE_THROW(collection<person> cc = s.query<person>(). \
 		filter(F(&person::id) == 1234). \

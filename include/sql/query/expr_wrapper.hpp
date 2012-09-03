@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 
+#include <sql/utils/raii_destructor.hpp>
 #include <sql/query/limit_expr.hpp>
 #include <sql/query/count_expr.hpp>
 
@@ -38,12 +39,19 @@ struct expr_wrapper
 	
 	int count()
 	{
-		return count_expr<this_type>(*this)(model_type(), get_query());
+		query * qry = get_query();
+		raii_destructor<query> destructor(qry);
+		return count_expr<this_type>(*this)(model_type(), qry);
 	}
-		
+	
 	query * get_query()
 	{
 		return lhs_.get_query();
+	}
+	
+	void set_query(query * ptr)
+	{
+		lhs_.set_query(ptr);
 	}
 	
 	void set_fields(std::list<std::string> const & f)

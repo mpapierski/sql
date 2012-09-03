@@ -1,6 +1,7 @@
 #if !defined(SQL_EXPRESSION_DETAIL_VALUE_)
 #define SQL_EXPRESSION_DETAIL_VALUE_
 
+#include <cassert>
 #include <sql/interface/interface.hpp>
 
 /**
@@ -19,9 +20,10 @@ struct value_impl
 	}
 	
 	template <typename F>
-	std::string operator()(F const & model_inst, query * qry)
+	std::string operator()(F const & model_inst, query * & qry)
 	{
-		qry->binders_.push_back(new binder<T>(value_));
+		assert(qry);
+		qry->add_bind(new binder<T>(value_));
 		return qry->next_placeholder();
 	}
 };

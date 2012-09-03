@@ -18,7 +18,7 @@ struct query
 	 * Late binders.
 	 */
 	std::list<abstract_binder*> binders_;
-	virtual ~query() { }
+	virtual ~query();
 	virtual void bind_int(int value) = 0;
 	virtual void bind_text(const char * data, int length) = 0;
 	virtual void bind_null() = 0;

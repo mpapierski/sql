@@ -27,6 +27,11 @@ struct all_expr
 	{
 		return lhs_.get_query();
 	}
+	
+	void set_query(query * ptr)
+	{
+		lhs_.set_query(ptr);
+	}
 };
 
 

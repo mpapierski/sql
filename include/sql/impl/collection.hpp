@@ -1,6 +1,8 @@
 #if !defined(SQL_IMPL_COLLECTION_INCLUDED_)
 #define SQL_IMPL_COLLECTION_INCLUDED_
 
+#include <sql/utils/raii_destructor.hpp>
+
 template <typename ModelT>
 struct collection
 {
@@ -14,8 +16,13 @@ struct collection
 		, qry_(lmt.get_query())
 		, expr_(lmt(model_inst_, qry_))
 	{
+		raii_destructor<query> destroy(qry_);
+		lmt.set_query(0);
 		qry_->prepare(expr_);
 		qry_->bind_all();
+		// if there is exception then qry will be deleted.
+		// we are "commiting" the pointer so it wont get deleted.
+		destroy.commit();
 	}
 	
 	template <typename F>
@@ -24,15 +31,18 @@ struct collection
 		, qry_(lmt.get_query())
 		, expr_(lmt(model_inst_, qry_))
 	{
+		raii_destructor<query> destroy(qry_);
+		lmt.set_query(0);
 		qry_->prepare(expr_);
 		qry_->bind_all();
+		destroy.commit();
 	}
 	
 	~collection()
 	{
 		delete qry_;
 	}
-	
+		
 	void execute()
 	{
 		  
