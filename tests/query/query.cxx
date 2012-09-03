@@ -30,20 +30,9 @@ struct connection_fixture
 	database db;
 	session s;
 	connection_fixture()
-		: db(get_test_database_url())
+		: db(DB)
 		, s(db.session())
 	{
-	}
-	
-	std::string get_test_database_url()
-	{
-		// XXX: #if defined(TRAVIS) ?
-		if (std::getenv("TRAVIS"))
-		{
-			if (DB == "sqlite")
-				return "sqlite://:memory:";
-		}
-		return DB;
 	}
 };
 
