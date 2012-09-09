@@ -80,6 +80,35 @@ BOOST_AUTO_TEST_CASE(test_raii_transaction)
 
 //____________________________________________________________________________//
 
+BOOST_AUTO_TEST_CASE(test_transaction_rollback_traditional)
+{
+	BOOST_CHECK_EQUAL(s.query<person>().count(), 0);
+	person p;
+	p.id = 123;
+	p.first_name = "First name";
+	p.last_name = "Last name";
+	s.add(p);	
+	try
+	{
+		s.begin();
+		person p;
+		p.id = 1234;
+		p.first_name = "XXX";
+		p.last_name = "YYY";
+		s.add(p);
+		//
+		throw std::exception();
+		//
+		s.commit();
+	} catch (std::exception)
+	{
+		s.rollback();
+	}
+	BOOST_CHECK_EQUAL(s.query<person>().count(), 1);
+}
+
+//____________________________________________________________________________//
+
 BOOST_AUTO_TEST_CASE(test_raii_transaction_rollback)
 {
 	BOOST_CHECK_EQUAL(s.query<person>().count(), 0);
