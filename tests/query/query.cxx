@@ -221,4 +221,31 @@ BOOST_AUTO_TEST_CASE(test_filter_count)
 	BOOST_CHECK_EQUAL(s.query<person>().count(), 2);
 }
 
+//____________________________________________________________________________//
+
+BOOST_AUTO_TEST_CASE(test_gt)
+{
+	person p;
+	p.id = 12345;
+	p.first_name = "xxx";
+	p.last_name = "yyy";
+	s.add(p);
+	for (int i = 1; i <= 10; i++)
+	{
+		person p;
+		p.id = i;
+		s.add(p);
+	}
+	BOOST_CHECK_EQUAL(s.query<person>().count(), 11);
+	// field > value
+	BOOST_CHECK_EQUAL(s.query<person>().filter(F(&person::id) > 5).count(), 6);
+	// (field == xxx) && (field > 5)
+	BOOST_CHECK_EQUAL(
+		s.query<person>().filter((F(&person::first_name) == "xxx") && (F(&person::last_name) == "yyy") && (F(&person::id) > 1000)).count(),
+		1);
+	BOOST_CHECK_EQUAL(
+		s.query<person>().filter((F(&person::first_name) == "xxx") || (F(&person::id) > 0)).count(),
+		11);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

@@ -13,7 +13,13 @@ template <typename T>
 struct value_impl
 {
 	T value_;
-	value_impl(T const & t)
+
+	/**
+	 * You can pass any value and it will be valid as long as
+	 * type T could be copy-constructed from type F.
+	 */
+	template <typename F>
+	value_impl(F const & t)
 		: value_(t)
 	{
 		

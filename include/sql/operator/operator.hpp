@@ -6,6 +6,7 @@
 #include <sql/operator/detail/and.hpp>
 #include <sql/operator/detail/eq.hpp>
 #include <sql/operator/detail/plus.hpp>
+#include <sql/operator/detail/gt.hpp>
 #include <sql/operator/detail/value.hpp>
 #include <sql/operator/detail/field.hpp>
 #include <sql/operator/aux/value_wrapper.hpp>
@@ -85,10 +86,25 @@ plus_impl<typename value_wrapper<T1>::type,
 	>(t1, t2);
 }
 
+/**
+ * Return GREATER expression node with two sub-expressions.
+ * @param t1 Left side
+ * @param t2 Right side
+ * @return GREATER expression node
+ */
+template <typename T1, typename T2>
+gt_impl<typename value_wrapper<T1>::type,
+        typename value_wrapper<T2>::type> gt_(T1 const & t1, T2 const & t2)
+{
+	return gt_impl<
+		typename value_wrapper<T1>::type,
+		typename value_wrapper<T2>::type
+	>(t1, t2);
+}
+
 //
 // GLOBAL OPERATORS FOR EXPRESSIONS
 //
-
 
 // N-th template name. Concatenate any token with n. This "any" token should be
 // constant (do not use __COUNTER__ here etc)
@@ -151,5 +167,7 @@ IMPLEMENT_OPERATOR(2, &&, and_impl, and_impl)
 IMPLEMENT_OPERATOR(2, ||, or_impl, eq_impl)
 // ((...) || (...)) || LHS
 IMPLEMENT_OPERATOR(2, ||, or_impl, or_impl)
+// LHS > RHS
+IMPLEMENT_OPERATOR(2, >, gt_impl, field_impl)
 
 #endif /* SQL_EXPRESSION_OPERATORS_ */

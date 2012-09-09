@@ -14,10 +14,22 @@ struct value_wrapper
 	typedef value_impl<T> type;
 };
 
+template <int N>
+struct value_wrapper<char[N]>
+{
+	typedef value_impl<std::string> type;
+};
+
 template <typename T1, typename T2>
 struct value_wrapper<plus_impl<T1, T2> >
 {
 	typedef plus_impl<T1, T2> type;
+};
+
+template <typename T1, typename T2>
+struct value_wrapper<gt_impl<T1, T2> >
+{
+	typedef gt_impl<T1, T2> type;
 };
 
 template <typename T1, typename T2>
