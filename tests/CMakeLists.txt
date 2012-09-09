@@ -5,3 +5,4 @@ FIND_PACKAGE (Boost REQUIRED)
 
 ADD_SUBDIRECTORY (expressions)
 ADD_SUBDIRECTORY (query)
+ADD_SUBDIRECTORY (transaction)

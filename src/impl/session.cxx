@@ -22,3 +22,18 @@ void session::execute(std::string const & q)
 {
 	return db_->query_factory();
 }
+
+void session::begin()
+{
+	this->execute("BEGIN TRANSACTION");
+}
+
+void session::commit()
+{
+	this->execute("COMMIT TRANSACTION");
+}
+
+void session::rollback()
+{
+	this->execute("ROLLBACK TRANSACTION");
+}

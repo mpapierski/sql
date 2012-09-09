@@ -18,3 +18,4 @@ script:
 after_script:
   - valgrind --leak-check=full --show-reachable=yes --error-exitcode=1 ./tests/expressions/expressions
   - valgrind --leak-check=full --show-reachable=yes --error-exitcode=1 ./tests/query/query
+  - valgrind --leak-check=full --show-reachable=yes --error-exitcode=1 ./tests/transaction/transaction

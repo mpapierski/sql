@@ -12,7 +12,6 @@ struct session
 	database* db_;
 	session(database* db);
 	~session();
-	void commit();
 	::query * new_query();   
 	template <typename T>
 	query_wrapper<T> query()
@@ -43,6 +42,19 @@ struct session
 	}
 	
 	void execute(std::string const & q);
+
+	/**
+	 * Begin transaction
+	 */
+	void begin();
+	/**
+	 * End transaction
+	 */
+	void rollback();
+	/**
+	 * Rollback transaction
+	 */
+	void commit();
 };
 
 #endif /* SQL_IMPL_INCLUDED_ */
