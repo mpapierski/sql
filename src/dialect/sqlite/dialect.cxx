@@ -13,7 +13,6 @@ sqlite_dialect::sqlite_dialect(url const & address)
 	, connection_(0)
 {
 	std::string db = address_.path_;
-	if (db == "/:memory:") db = ":memory:";
 	if (sqlite3_open(db.c_str(), &connection_) != SQLITE_OK)
 	{
 		throw std::logic_error("Unable to connect to SQLite database " + db);
