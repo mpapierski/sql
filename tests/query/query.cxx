@@ -128,9 +128,9 @@ BOOST_AUTO_TEST_CASE (test_collection)
 	BOOST_CHECK(!!p2);
 	BOOST_REQUIRE_NO_THROW(*p2);
 	person const & person_ = *p2;
-	BOOST_CHECK(person_.id == 1234);
-	BOOST_CHECK(person_.first_name == std::string("John"));
-	BOOST_CHECK(person_.last_name == std::string("Smith"));
+	BOOST_CHECK_EQUAL(person_.id, 1234);
+	BOOST_CHECK_EQUAL(person_.first_name, "John");
+	BOOST_CHECK_EQUAL(person_.last_name, "Smith");
 }
 
 //____________________________________________________________________________//
