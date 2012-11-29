@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <functional>
 #include <stdexcept>
 #include <sql/utils/url.hpp>
 

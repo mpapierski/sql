@@ -49,7 +49,7 @@ void sqlite_query::bind_null()
 void sqlite_query::bind_text(const char * value, int length)
 {
 	assert(stmt_);
-	int result = sqlite3_bind_text(stmt_, ++binding_, value, length, SQLITE_STATIC);
+	int result = sqlite3_bind_text(stmt_, ++binding_, value, length, SQLITE_TRANSIENT);
 	if (result != SQLITE_OK)
 	{
 		std::stringstream ss;
