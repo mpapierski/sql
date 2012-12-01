@@ -1,6 +1,11 @@
 #include <sql/impl/database.hpp>
 #include <sql/interface/interface.hpp>
 
+#if !defined(SQL_CONFIG_HPP_)
+#	define SQL_CONFIG_HPP_
+#	include <sql/config.hpp>
+#endif
+
 table::table(std::string const & name)
 	: name_(name)
 {
@@ -12,7 +17,11 @@ std::list<std::string> table::get_fields() const
 	std::list<std::string> result;
 	for ( std::map<abstract_field*, std::string>::const_iterator it = fields.begin(), end = fields.end(); it != end; ++it)
 	{
+#if defined(STD_LIST_HAS_EMPLACE)
+		result.emplace_back(it->second);
+#else
 		result.push_back(it->second);
+#endif
 	}
 	return result;
 }
@@ -23,7 +32,11 @@ std::list<abstract_field*> table::get_field_pointers() const
 	for (std::map<abstract_field*, std::string>::const_iterator it(fields.begin()),
 		end(fields.end()); it != end; ++it)
 	{
+#if defined(STD_LIST_HAS_EMPLACE)
+		result.emplace_back(it->first);
+#else
 		result.push_back(it->first);
+#endif
 	}
 	return result;   
 }

@@ -4,6 +4,11 @@
 #include <string>
 #include <sstream>
 
+#if !defined(SQL_CONFIG_HPP_)
+#	define SQL_CONFIG_HPP_
+#	include <sql/config.hpp>
+#endif
+
 template <typename Lhs>
 struct count_expr
 {
@@ -22,7 +27,11 @@ struct count_expr
 	int operator()(F const & model_inst, query * qry)
 	{
 		std::list<std::string> new_fields;
+#if defined(STD_LIST_HAS_EMPLACE)
+		new_fields.emplace_back("COUNT(*)");
+#else
 		new_fields.push_back("COUNT(*)");
+#endif
 		lhs_.set_fields(new_fields);		
 		std::string const & e = lhs_(model_inst, qry);
 		qry->prepare(e);
