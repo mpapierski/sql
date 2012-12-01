@@ -85,6 +85,11 @@ struct field: abstract_field
 	{
 		return value_ == data;
 	}
+
+	operator T()
+	{
+		return value_;
+	}
 };
 
 
